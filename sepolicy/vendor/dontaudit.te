@@ -1,6 +1,10 @@
-# dontaudit.te
+dontaudit vendor_init build_prop:property_service set;
+dontaudit vendor_init userdebug_or_eng_prop:property_service set;
 
-# Ignore attempts to read unused OnePlus props due to kanged libqmi_cci.so
+dontaudit hal_nfc_default hal_secure_element_hwservice:hwservice_manager find;
+
+dontaudit cacaoserver shell_data_file:dir search;
+
 dontaudit {
   adpl
   atfwd
@@ -25,8 +29,6 @@ dontaudit {
   wcnss_service
 } oneplus_prop:file read;
 
-
-# Ignore attempts to read unused persist.vendor.data.target_id via libdsutils.so
 dontaudit {
   adpl
   cnd

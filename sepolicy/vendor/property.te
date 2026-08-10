@@ -1,5 +1,3 @@
-# property.te
-
 system_internal_prop(secureadb_prop)
 system_internal_prop(semc_sim_prop)
 system_internal_prop(semc_version_prop)
@@ -29,3 +27,4 @@ vendor_internal_prop(wigig_prop)
 
 # Sony & DoCoMo OEM customization properties
 vendor_internal_prop(somc_oem_prop)
+vendor_internal_prop(vendor_telephony_mnc_prop)

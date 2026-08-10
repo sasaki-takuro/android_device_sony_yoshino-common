@@ -1,0 +1,10 @@
+allow hal_graphics_allocator_default sysfs_kgsl:lnk_file read;
+allow bootanim sysfs_kgsl:lnk_file read;
+allow radio sysfs_kgsl:lnk_file read;
+allow system_server sysfs_kgsl:lnk_file read;
+allow platform_app sysfs_kgsl:lnk_file read;
+
+get_prop(qtidataservices_app, vendor_default_prop)
+
+allow vendor_init device:file { create write open };
+allow vendor_init cgroup:file getattr;

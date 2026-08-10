@@ -8,7 +8,8 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_PACKAGES += \
     libcacao_client \
-    libcacaoreffix
+    libcacaoreffix \
+    libsonypiecompat
 
 PRODUCT_PACKAGES += \
     CarrierConfigOverlay

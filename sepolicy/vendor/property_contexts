@@ -56,3 +56,10 @@ wifi.active.interface                u:object_r:wifi_active_prop:s0
 # Camera
 vendor.camera.sensor.name.front      u:object_r:vendor_somc_camera_prop:s0
 vendor.libcameralight.force_off      u:object_r:vendor_somc_camera_prop:s0
+
+# Sony OEM & Customization properties
+ro.somc.customerid                  u:object_r:somc_oem_prop:s0
+ro.somc.                            u:object_r:somc_oem_prop:s0
+ro.cst.                             u:object_r:somc_oem_prop:s0
+ro.semc.                            u:object_r:somc_oem_prop:s0
+ro.com.nttdocomo.                   u:object_r:somc_oem_prop:s0

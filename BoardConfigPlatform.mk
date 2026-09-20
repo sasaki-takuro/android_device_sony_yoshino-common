@@ -168,3 +168,4 @@ ifeq ($(KSU_ENABLED), true)
    
     PRODUCT_NAME_SUFFIX := -KSU
 endif
+USE_SOONG_DEFINED_SYSTEM_IMAGE := false

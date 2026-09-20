@@ -108,7 +108,7 @@ DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE := \
     $(PLATFORM_PATH)/device_framework_matrix.xml \
     hardware/qcom-caf/common/vendor_framework_compatibility_matrix.xml \
     hardware/qcom-caf/common/vendor_framework_compatibility_matrix_legacy.xml \
-    vendor/lineage/config/device_framework_matrix.xml
+    vendor/aicp/config/device_framework_matrix.xml
 ifneq ($(filter poplar_dsds maple_dsds, $(TARGET_DEVICE)),)
 DEVICE_MANIFEST_FILE := $(PLATFORM_PATH)/manifest_dsds.xml
 else
@@ -168,3 +168,4 @@ ifeq ($(KSU_ENABLED), true)
    
     PRODUCT_NAME_SUFFIX := -KSU
 endif
+USE_SOONG_DEFINED_SYSTEM_IMAGE := false

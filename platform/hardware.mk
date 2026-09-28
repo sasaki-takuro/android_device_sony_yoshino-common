@@ -58,8 +58,8 @@ PRODUCT_PACKAGES += \
     Tag
 
 ### OPENCUSTOMIZATIONSELECTOR
-PRODUCT_PACKAGES += \
-    CustomizationSelector
+# PRODUCT_PACKAGES += \
+#     CustomizationSelector
 
 # PERFD (DUMMY)
 PRODUCT_PACKAGES += \

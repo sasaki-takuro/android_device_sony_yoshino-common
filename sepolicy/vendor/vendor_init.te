@@ -71,3 +71,8 @@ set_prop(vendor_init, vendor_rild_libpath_prop)
 userdebug_or_eng(`
 	set_prop(vendor_init, vendor_sensors_dbg_prop)
 ')
+
+# Sony/SEMC props from vendor build.prop
+set_prop(vendor_init, semc_version_prop)
+set_prop(vendor_init, semc_product_prop)
+set_prop(vendor_init, somc_oem_prop)

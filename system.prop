@@ -234,6 +234,7 @@ ro.surface_flinger.default_composition_dataspace=0
 
 # 停用 HDR 處理
 ro.surface_flinger.has_HDR_display=false
+ro.surface_flinger.supports_background_blur=0
 
 # SD Encryption for use SD card as internal storage
 ro.crypto.volume.options=aes-256-xts:aes-256-cts

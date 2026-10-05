@@ -119,7 +119,7 @@ persist.vendor.camera.expose.aux=1
 ro.vendor.display.cabl=2
 
 # Display Properties as per treble compliance
-vendor.gralloc.enable_fb_ubwc=1
+vendor.gralloc.enable_fb_ubwc=0
 
 # Graphics
 ro.hardware.egl=adreno

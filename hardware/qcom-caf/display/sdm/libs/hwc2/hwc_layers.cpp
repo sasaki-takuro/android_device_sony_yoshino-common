@@ -172,16 +172,13 @@ bool GetSDMColorSpace(const int32_t &dataspace, ColorMetaData *color_metadata) {
 HWCLayer::HWCLayer(hwc2_display_t display_id, HWCBufferAllocator *buf_allocator)
   : id_(next_id_++), display_id_(display_id), buffer_allocator_(buf_allocator) {
   layer_ = new Layer();
-  // Fences are deferred, so the first time this layer is presented, return -1
-  // TODO(user): Verify that fences are properly obtained on suspend/resume
-  release_fences_.push(-1);
+  release_fence_ = -1;
 }
 
 HWCLayer::~HWCLayer() {
-  // Close any fences left for this layer
-  while (!release_fences_.empty()) {
-    close(release_fences_.front());
-    release_fences_.pop();
+  if (release_fence_ >= 0) {
+    close(release_fence_);
+    release_fence_ = -1;
   }
   close(ion_fd_);
   if (layer_) {
@@ -823,13 +820,14 @@ void HWCLayer::SetComposition(const LayerComposition &sdm_composition) {
   return;
 }
 void HWCLayer::PushReleaseFence(int32_t fence) {
-  release_fences_.push(fence);
+  if (release_fence_ >= 0) {
+    close(release_fence_);
+  }
+  release_fence_ = fence;
 }
 int32_t HWCLayer::PopReleaseFence(void) {
-  if (release_fences_.empty())
-    return -1;
-  auto fence = release_fences_.front();
-  release_fences_.pop();
+  auto fence = release_fence_;
+  release_fence_ = -1;
   return fence;
 }
 

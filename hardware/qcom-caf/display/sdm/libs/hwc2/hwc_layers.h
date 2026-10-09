@@ -101,7 +101,7 @@ class HWCLayer {
   const hwc2_layer_t id_;
   const hwc2_display_t display_id_;
   static std::atomic<hwc2_layer_t> next_id_;
-  std::queue<int32_t> release_fences_;
+  int32_t release_fence_ = -1;
   int ion_fd_ = -1;
   HWCBufferAllocator *buffer_allocator_ = NULL;
   int32_t dataspace_ =  HAL_DATASPACE_UNKNOWN;

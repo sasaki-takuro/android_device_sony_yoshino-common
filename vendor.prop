@@ -251,8 +251,8 @@ zygote.critical_window.minute=10
 # ---------------------------------------------------------
 
 # 1. 強制 GPU 同步 (關鍵！解決切換 App 或重跑時的黑屏)
-# debug.sf.enable_gl_backpressure=1
-# debug.sf.latch_unsignaled=1
+debug.sf.enable_gl_backpressure=1
+debug.sf.latch_unsignaled=1
 
 # 2. 禁用 EGL Blob Cache (避免舊 Firmware 讀到不相容的新版 Shader Cache)
 debug.egl.blobcache_invalid_dirty=1

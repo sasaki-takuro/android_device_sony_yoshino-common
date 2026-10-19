@@ -123,6 +123,7 @@ on post-fs
     restorecon /dev/block/bootdevice/by-name/TA
 
     # Setup owner and permissions of TA for tad
+    wait /dev/block/sda1
     chown oem_2997 oem_2997 /dev/block/sda1
     chmod 0770 /dev/block/sda1
 

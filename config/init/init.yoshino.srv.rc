@@ -192,13 +192,13 @@ service vendor.sensors.qti /vendor/bin/sensors.qti
     user system
     group system
 
-### SONY MODEM SWITCHER
-service modem_switcher /system/bin/sony-modem-switcher
-    class main
-    user root
-    group root system oem_2993 cache
-    disabled
-    oneshot
+# ### SONY MODEM SWITCHER
+# service modem_switcher /system/bin/sony-modem-switcher
+#     class main
+#     user root
+#     group root system oem_2993 cache
+#     disabled
+#     oneshot
 
 on property:persist.sys.mba_boot_timeout=*
     write /sys/module/pil_msa/parameters/pbl_mba_boot_timeout_ms ${persist.sys.mba_boot_timeout}

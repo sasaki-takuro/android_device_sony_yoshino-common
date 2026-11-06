@@ -159,7 +159,7 @@ on post-fs
     verity_update_state
 
     # SONY: Switch the modem if needed
-    start modem_switcher
+#    start modem_switcher
 
 on post-fs-data
     # To observe dnsmasq.leases file for dhcp information of soft ap.

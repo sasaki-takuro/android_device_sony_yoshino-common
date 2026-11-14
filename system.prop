@@ -39,7 +39,6 @@ debug.egl.force_1_4=1
 
 ro.qualcomm.cabl=0
 
-vendor.display.enable_default_color_mode=1
 
 # HWComposer
 debug.renderengine.backend=skiaglthreaded
@@ -183,7 +182,6 @@ ro.surface_flinger.has_HDR_display=false
 ro.surface_flinger.supports_background_blur=0
 ro.surface_flinger.max_frame_buffer_acquired_buffers=3
 
-ro.surface_flinger.supports_background_blur=1
 
 ro.crypto.volume.options=aes-256-xts:aes-256-cts
 ro.crypto.volume.metadata.encryption=aes-256-xts

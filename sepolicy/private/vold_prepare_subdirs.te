@@ -1,3 +1,4 @@
 # vold_prepare_subdirs.te
 
 allow vold_prepare_subdirs checkin_data_file:dir relabelfrom;
+allow vold_prepare_subdirs self:global_capability_class_set sys_admin;

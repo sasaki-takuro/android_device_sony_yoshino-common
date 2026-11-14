@@ -220,7 +220,7 @@ ro.zygote.disable_gl_preload=1
 # ADB
 persist.service.adb.enable=1
 persist.service.debuggable=1
-persist.sys.usb.config=mtp,adb
+persist.sys.usb.config=mtp
 # ro.debuggable=1
 
 # Fix Graphic issues

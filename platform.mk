@@ -28,7 +28,7 @@ PRODUCT_SOONG_NAMESPACES += \
     $(PLATFORM_PATH) \
     hardware/google/interfaces \
     hardware/google/pixel \
-    hardware/qcom-caf/msm8998/media \
+    hardware/qcom-caf/msm8998 \
     hardware/qcom-caf/wlan \
     hardware/qcom-caf/wlan/qcwcn
 

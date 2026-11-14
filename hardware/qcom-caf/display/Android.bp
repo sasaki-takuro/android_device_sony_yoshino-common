@@ -28,8 +28,14 @@ cc_library_headers {
         "sdm/include",
         "gralloc",
     ],
-    header_libs: ["libhardware_headers"],
-    export_header_lib_headers: ["libhardware_headers"],
+    header_libs: [
+        "libhardware_headers",
+        "generated_kernel_headers",
+    ],
+    export_header_lib_headers: [
+        "libhardware_headers",
+        "generated_kernel_headers",
+    ],
 }
 
 cc_library_headers {
@@ -40,8 +46,14 @@ cc_library_headers {
         "libqdutils",
         "gralloc",
     ],
-    header_libs: ["libhardware_headers"],
-    export_header_lib_headers: ["libhardware_headers"],
+    header_libs: [
+        "libhardware_headers",
+        "generated_kernel_headers",
+    ],
+    export_header_lib_headers: [
+        "libhardware_headers",
+        "generated_kernel_headers",
+    ],
 }
 
 subdirs = [

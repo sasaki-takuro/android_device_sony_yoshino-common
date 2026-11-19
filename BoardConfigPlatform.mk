@@ -130,7 +130,6 @@ ifeq ($(KSU_ENABLED), true)
     PRODUCT_NAME_SUFFIX := -KSU
 endif
 
-BOARD_KERNEL_CMDLINE += androidboot.selinux=permissive
 BOARD_KERNEL_CMDLINE += loglevel=8
 BOARD_KERNEL_CMDLINE += printk.devkmsg=on
 BOARD_KERNEL_CMDLINE += panic_on_oops=1

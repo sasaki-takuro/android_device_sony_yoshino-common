@@ -1,2 +1,3 @@
 allow kcmdlinectrl sysfs_dt_firmware_android:dir { read open };
 allow misctrl sysfs_dt_firmware_android:dir { read open };
+allow mediaprovider_app radio_service:service_manager find;

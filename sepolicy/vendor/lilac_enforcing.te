@@ -8,3 +8,10 @@ get_prop(qtidataservices_app, vendor_default_prop)
 
 allow vendor_init device:file { create write open };
 allow vendor_init cgroup:file getattr;
+
+get_prop(hal_camera_somc, default_prop)
+get_prop(platform_app, bluetooth_finder_prop)
+get_prop(vendor_dataservice_app, vendor_default_prop)
+binder_call(qtidataservices_app, location)
+dontaudit isolated_app content_capture_service:service_manager find;
+allow appdomain sysfs_kgsl:lnk_file read;

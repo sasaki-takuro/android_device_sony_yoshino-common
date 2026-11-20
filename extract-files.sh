@@ -60,6 +60,7 @@ sed -i 's/version\=\"2\.0\"/version\=\"1\.0\"/g' "${DEVICE_COMMON_ROOT}"/product
 sed -i '4 a\    restorecon /persist/wlan' "${DEVICE_COMMON_ROOT}"/vendor/etc/init/taimport_vendor.rc
 
 grep -q "libgui_shim.so" "${DEVICE_COMMON_ROOT}"/system_ext/lib64/lib-imsvideocodec.so || "${PATCHELF}" --add-needed "libgui_shim.so" "${DEVICE_COMMON_ROOT}"/system_ext/lib64/lib-imsvideocodec.so
+grep -q "libsonypiecompat.so" "${DEVICE_COMMON_ROOT}"/lib/libcacao_process_ctrl_gateway.so || "${PATCHELF_0_17_2}" --add-needed "libsonypiecompat.so" "${DEVICE_COMMON_ROOT}"/lib/libcacao_process_ctrl_gateway.so
 
 "${PATCHELF}" --replace-needed "libstdc++.so" "libstdc++_vendor.so" "${DEVICE_COMMON_ROOT}"/lib/libjni_imageutil.so
 "${PATCHELF}" --replace-needed "libstdc++.so" "libstdc++_vendor.so" "${DEVICE_COMMON_ROOT}"/lib/libjni_snapcammosaic.so
@@ -129,5 +130,11 @@ CAM_RC="${DEVICE_COMMON_ROOT}"/vendor/etc/init/vendor.somc.hardware.camera.provi
 if ! grep -q "cama15" "${CAM_RC}"; then
   sed -i '/capabilities SYS_NICE/a\    setenv LD_PRELOAD /vendor/lib/libsensorfix.so:/vendor/lib/cama15/libutils.so:/vendor/lib/cama15/libui.so:/vendor/lib/cama15/libc++.so\n    setenv LD_LIBRARY_PATH /vendor/lib/cama15:/vendor/lib:/system/lib' "${CAM_RC}"
 fi
+
+# Enforcing camera compatibility fixups
+grep -q "libsonypiecompat.so" "${DEVICE_COMMON_ROOT}"/bin/cacaoserver || "${PATCHELF_0_17_2}" --add-needed "libsonypiecompat.so" "${DEVICE_COMMON_ROOT}"/bin/cacaoserver
+for f in "${DEVICE_COMMON_ROOT}"/lib/libsomc_*.so "${DEVICE_COMMON_ROOT}"/lib/libmmcamera_tintless_algo.so; do
+    [ -f "$f" ] && "${PATCHELF_0_17_2}" --set-rpath "/vendor/lib/cama15" "$f"
+done
 
 "${MY_DIR}"/setup-makefiles.sh

@@ -60,6 +60,10 @@ sed -i 's/version\=\"2\.0\"/version\=\"1\.0\"/g' "${DEVICE_COMMON_ROOT}"/product
 sed -i '4 a\    restorecon /persist/wlan' "${DEVICE_COMMON_ROOT}"/vendor/etc/init/taimport_vendor.rc
 
 grep -q "libgui_shim.so" "${DEVICE_COMMON_ROOT}"/system_ext/lib64/lib-imsvideocodec.so || "${PATCHELF}" --add-needed "libgui_shim.so" "${DEVICE_COMMON_ROOT}"/system_ext/lib64/lib-imsvideocodec.so
+grep -q "libcacaoreffix.so" "${DEVICE_COMMON_ROOT}"/bin/cacaoserver || "${PATCHELF}" --add-needed "libcacaoreffix.so" "${DEVICE_COMMON_ROOT}"/bin/cacaoserver
+grep -q "libsonypiecompat.so" "${DEVICE_COMMON_ROOT}"/bin/cacaoserver || "${PATCHELF}" --add-needed "libsonypiecompat.so" "${DEVICE_COMMON_ROOT}"/bin/cacaoserver
+grep -q "libcacaoreffix.so" "${DEVICE_COMMON_ROOT}"/lib/libcacao_process_ctrl_gateway.so || "${PATCHELF}" --add-needed "libcacaoreffix.so" "${DEVICE_COMMON_ROOT}"/lib/libcacao_process_ctrl_gateway.so
+grep -q "libsonypiecompat.so" "${DEVICE_COMMON_ROOT}"/lib/libcacao_process_ctrl_gateway.so || "${PATCHELF}" --add-needed "libsonypiecompat.so" "${DEVICE_COMMON_ROOT}"/lib/libcacao_process_ctrl_gateway.so
 
 "${PATCHELF}" --replace-needed "libstdc++.so" "libstdc++_vendor.so" "${DEVICE_COMMON_ROOT}"/lib/libjni_imageutil.so
 "${PATCHELF}" --replace-needed "libstdc++.so" "libstdc++_vendor.so" "${DEVICE_COMMON_ROOT}"/lib/libjni_snapcammosaic.so
@@ -83,6 +87,9 @@ grep -q "libgui_shim.so" "${DEVICE_COMMON_ROOT}"/system_ext/lib64/lib-imsvideoco
 "${PATCHELF_0_17_2}" --replace-needed "libstdc++.so" "libstdc++_vendor.so" "${DEVICE_COMMON_ROOT}"/vendor/lib/libsomc_shortcakersc.so
 "${PATCHELF_0_17_2}" --replace-needed "libstdc++.so" "libstdc++_vendor.so" "${DEVICE_COMMON_ROOT}"/vendor/lib/libsomc_spicarsc.so
 "${PATCHELF_0_17_2}" --replace-needed "libstdc++.so" "libstdc++_vendor.so" "${DEVICE_COMMON_ROOT}"/vendor/lib/libsomc_sumomolpserv.so
+for f in "${DEVICE_COMMON_ROOT}"/vendor/lib/libsomc_*.so "${DEVICE_COMMON_ROOT}"/vendor/lib/libmmcamera_tintless_algo.so; do
+    [ -f "$f" ] && "${PATCHELF_0_17_2}" --set-rpath "/vendor/lib/cama15" "$f"
+done
 "${PATCHELF_0_17_2}" --replace-needed "libstdc++.so" "libstdc++_vendor.so" "${DEVICE_COMMON_ROOT}"/vendor/lib/libsomc_sumomorsc.so
 "${PATCHELF_0_17_2}" --replace-needed "libstdc++.so" "libstdc++_vendor.so" "${DEVICE_COMMON_ROOT}"/vendor/lib/libsomc_topporsc.so
 "${PATCHELF_0_17_2}" --replace-needed "libstdc++.so" "libstdc++_vendor.so" "${DEVICE_COMMON_ROOT}"/vendor/lib/libsomc_yummyrsc.so

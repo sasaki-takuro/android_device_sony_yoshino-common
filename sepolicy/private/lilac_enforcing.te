@@ -1,2 +1,7 @@
 allow kcmdlinectrl sysfs_dt_firmware_android:dir { read open };
 allow misctrl sysfs_dt_firmware_android:dir { read open };
+allow bootanim audio_service:service_manager find;
+allow bootanim mediametrics_service:service_manager find;
+binder_call(bootanim, audioserver)
+binder_call(audioserver, bootanim)
+binder_call(bootanim, mediametrics)

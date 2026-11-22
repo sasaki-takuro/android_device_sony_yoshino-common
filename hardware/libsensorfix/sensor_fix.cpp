@@ -124,13 +124,30 @@ void* AServiceManager_checkService(const char* instance) {
 namespace {
 
 struct ManagerState : public RefBase {
+    std::mutex mgr_mtx;
     sp<ISensorManager> mgr;
     std::mutex cache_mtx;
     std::map<int, ASensor*> cache;
 };
 
 ManagerState* g_manager = nullptr;
-std::once_flag g_managerOnce;
+std::mutex g_manager_init_mtx;
+
+sp<ISensorManager> getOrRefreshManager(ManagerState* s, bool forceRefresh) {
+    if (s == nullptr) return nullptr;
+    std::lock_guard<std::mutex> l(s->mgr_mtx);
+    if (forceRefresh || s->mgr == nullptr) {
+        sp<ISensorManager> fresh = ISensorManager::tryGetService("default", false);
+        if (fresh != nullptr) {
+            s->mgr = fresh;
+            ALOGI("HIDL ISensorManager acquired/refreshed");
+        } else {
+            s->mgr.clear();
+            ALOGE("HIDL ISensorManager::tryGetService(\"default\") returned null");
+        }
+    }
+    return s->mgr;
+}
 
 struct QueueState;
 
@@ -227,24 +244,22 @@ extern "C" {
 #pragma GCC visibility push(default)
 
 ASensorManager* ASensorManager_getInstanceForPackage(const char* package) {
-    std::call_once(g_managerOnce, [&]() {
-        sp<ISensorManager> mgr = ISensorManager::tryGetService("default", false);
-        if (mgr == nullptr) {
-            ALOGE("HIDL ISensorManager::tryGetService(\"default\") returned null -- "
-                  "EIS unavailable (is sensorservice running?)");
-            return;
-        }
+    std::lock_guard<std::mutex> l(g_manager_init_mtx);
+    if (g_manager == nullptr) {
         g_manager = new ManagerState;
-        g_manager->mgr = mgr;
-        ALOGI("HIDL ISensorManager acquired (package='%s'); ASensor bridge ACTIVE",
-              package ? package : "(null)");
-    });
+    }
+    sp<ISensorManager> mgr = getOrRefreshManager(g_manager, false);
+    if (mgr == nullptr) {
+        return nullptr;
+    }
+    ALOGI("HIDL ISensorManager ready (package='%s'); ASensor bridge ACTIVE",
+          package ? package : "(null)");
     return reinterpret_cast<ASensorManager*>(g_manager);
 }
 
 ASensor const* ASensorManager_getDefaultSensor(ASensorManager* m, int type) {
     ManagerState* s = reinterpret_cast<ManagerState*>(m);
-    if (s == nullptr || s->mgr == nullptr) return nullptr;
+    if (s == nullptr) return nullptr;
 
     {
         std::lock_guard<std::mutex> l(s->cache_mtx);
@@ -258,9 +273,22 @@ ASensor const* ASensorManager_getDefaultSensor(ASensorManager* m, int type) {
         info = si;
         result = r;
     };
-    s->mgr->getDefaultSensor(static_cast<SensorType>(type), cb);
-    if (result != Result::OK) {
-        ALOGE("getDefaultSensor(type=%d) failed: result=%d", type, static_cast<int>(result));
+
+    bool ok = false;
+    for (int attempt = 0; attempt < 2; ++attempt) {
+        sp<ISensorManager> mgr = getOrRefreshManager(s, attempt > 0);
+        if (mgr == nullptr) break;
+        Return<void> ret = mgr->getDefaultSensor(static_cast<SensorType>(type), cb);
+        if (ret.isOk()) {
+            ok = true;
+            break;
+        }
+        ALOGW("getDefaultSensor(type=%d) transport error (attempt %d): %s",
+              type, attempt + 1, ret.description().c_str());
+    }
+    if (!ok || result != Result::OK) {
+        ALOGE("getDefaultSensor(type=%d) failed: ok=%d result=%d",
+              type, ok ? 1 : 0, static_cast<int>(result));
         return nullptr;
     }
 
@@ -277,7 +305,7 @@ ASensorEventQueue* ASensorManager_createEventQueue(
         ASensorManager* m, ALooper* , int ,
         ALooperCallbackFunc cb, void* data) {
     ManagerState* s = reinterpret_cast<ManagerState*>(m);
-    if (s == nullptr || s->mgr == nullptr) {
+    if (s == nullptr) {
         ALOGE("createEventQueue: no manager");
         return nullptr;
     }
@@ -300,9 +328,25 @@ ASensorEventQueue* ASensorManager_createEventQueue(
         qs->queue = q;
         result = r;
     };
-    s->mgr->createEventQueue(cb_obj, hicb);
-    if (result != Result::OK || qs->queue == nullptr) {
-        ALOGE("createEventQueue failed: result=%d", static_cast<int>(result));
+
+    bool ok = false;
+    for (int attempt = 0; attempt < 2; ++attempt) {
+        sp<ISensorManager> mgr = getOrRefreshManager(s, attempt > 0);
+        if (mgr == nullptr) break;
+        qs->queue.clear();
+        result = Result::INVALID_OPERATION;
+        Return<void> ret = mgr->createEventQueue(cb_obj, hicb);
+        if (ret.isOk()) {
+            ok = true;
+            break;
+        }
+        ALOGW("createEventQueue transport error (attempt %d): %s",
+              attempt + 1, ret.description().c_str());
+    }
+
+    if (!ok || result != Result::OK || qs->queue == nullptr) {
+        ALOGE("createEventQueue failed: ok=%d result=%d",
+              ok ? 1 : 0, static_cast<int>(result));
         ::close(qs->read_fd);
         ::close(qs->write_fd);
         return nullptr;
@@ -335,7 +379,11 @@ void ASensorManager_destroyEventQueue(ASensorManager* , ASensorEventQueue* q) {
     qs->stopping.store(true, std::memory_order_release);
 
     if (qs->queue != nullptr && qs->last_handle >= 0) {
-        qs->queue->disableSensor(qs->last_handle);
+        Return<Result> r = qs->queue->disableSensor(qs->last_handle);
+        if (!r.isOk()) {
+            ALOGW("destroyEventQueue disableSensor(h=%d) transport error: %s",
+                  qs->last_handle, r.description().c_str());
+        }
     }
 
     {
